@@ -1,12 +1,14 @@
 class RecipeCard extends HTMLElement {
   constructor() {
     // Part 1 Expose - TODO
-
+    super();
+    this.attachShadow({mode: 'open'});
     // You'll want to attach the shadow DOM here
   }
 
   set data(data) {
     // This is the CSS that you'll use for your recipe cards
+   
     const styleElem = document.createElement('style');
     const styles = `
       * {
@@ -86,8 +88,67 @@ class RecipeCard extends HTMLElement {
     styleElem.innerHTML = styles;
 
     // Here's the root element that you'll want to attach all of your other elements to
+    console.log(data);
     const card = document.createElement('article');
 
+    let image = document.createElement('img');
+    image.setAttribute('src', searchForKey(data, 'thumbnailUrl'));
+    image.setAttribute('alt', searchForKey(data, 'headline'));
+
+    let titlePara = document.createElement('p');
+    titlePara.className = 'title';
+    titlePara.classList.add('title');
+    let a = document.createElement('a');
+    a.setAttribute('href', getUrl(data));
+    a.innerHTML = searchForKey(data, 'headline');
+
+    titlePara.appendChild(a);
+
+    let orgPara = document.createElement('p');
+    orgPara.classList.add('organization');
+    orgPara.innerHTML = getOrganization(data);
+
+    let div = document.createElement('div');
+    div.classList.add('rating');
+    let starRate = searchForKey(data, 'ratingValue');
+    let starSpan = document.createElement('span');
+    if (starRate == null) {
+      starSpan.innerHTML = 'No Reviews';
+    }
+    else {
+      starSpan.innerHTML = starRate;
+    }
+
+    div.appendChild(starSpan);
+
+    if (starRate != null) {
+      let starImg = document.createElement('img');
+      starImg.setAttribute('src', 'assets/images/icons/' + Math.round(starRate) + '-star.svg');
+      starImg.setAttribute('alt', Math.round(starRate) + ' stars');
+      div.appendChild(starImg);
+
+      let numSpan = document.createElement('span');
+      numSpan.innerHTML = '(' + searchForKey(data, 'ratingCount') + ')';
+      div.appendChild(numSpan);
+    }
+
+    let time = document.createElement('time');
+    //console.log(searchForKey(data, 'cookTime'));
+    time.innerHTML = convertTime(searchForKey(data, 'totalTime'));
+    
+    let ingredients = document.createElement('p');
+    ingredients.className = 'ingredients';
+    ingredients.innerHTML = createIngredientList(searchForKey(data, 'recipeIngredient'));
+
+    card.appendChild(image);
+    card.appendChild(titlePara);
+    card.appendChild(orgPara);
+    card.appendChild(div);
+    card.appendChild(time);
+    card.appendChild(ingredients);
+
+    this.shadowRoot.appendChild(styleElem);
+    this.shadowRoot.appendChild(card);
     // Some functions that will be helpful here:
     //    document.createElement()
     //    document.querySelector()
@@ -112,8 +173,8 @@ class RecipeCard extends HTMLElement {
 
 /**
  * Recursively search for a key nested somewhere inside an object
- * @param {Object} object the object with which you'd like to search
- * @param {String} key the key that you are looking for in the object
+ * @titleParam {Object} object the object with which you'd like to search
+ * @titleParam {String} key the key that you are looking for in the object
  * @returns {*} the value of the found key
  */
 function searchForKey(object, key) {
@@ -133,7 +194,7 @@ function searchForKey(object, key) {
 
 /**
  * Extract the URL from the given recipe schema JSON object
- * @param {Object} data Raw recipe JSON to find the URL of
+ * @titleParam {Object} data Raw recipe JSON to find the URL of
  * @returns {String} If found, it returns the URL as a string, otherwise null
  */
 function getUrl(data) {
@@ -149,7 +210,7 @@ function getUrl(data) {
 /**
  * Similar to getUrl(), this function extracts the organizations name from the
  * schema JSON object. It's not in a standard location so this function helps.
- * @param {Object} data Raw recipe JSON to find the org string of
+ * @titleParam {Object} data Raw recipe JSON to find the org string of
  * @returns {String} If found, it retuns the name of the org as a string, otherwise null
  */
 function getOrganization(data) {
@@ -167,7 +228,7 @@ function getOrganization(data) {
 /**
  * Converts ISO 8061 time strings to regular english time strings.
  * Not perfect but it works for this lab
- * @param {String} time time string to format
+ * @titleParam {String} time time string to format
  * @return {String} formatted time string
  */
 function convertTime(time) {
@@ -194,10 +255,10 @@ function convertTime(time) {
 
 /**
  * Takes in a list of ingredients raw from imported data and returns a neatly
- * formatted comma separated list.
- * @param {Array} ingredientArr The raw unprocessed array of ingredients from the
+ * formatted comma setitleParated list.
+ * @titleParam {Array} ingredientArr The raw unprocessed array of ingredients from the
  *                              imported data
- * @return {String} the string comma separate list of ingredients from the array
+ * @return {String} the string comma setitleParate list of ingredients from the array
  */
 function createIngredientList(ingredientArr) {
   let finalIngredientList = '';
@@ -207,7 +268,7 @@ function createIngredientList(ingredientArr) {
    * This isn't perfect, it makes the assumption that there will always be a quantity
    * (sometimes there isn't, so this would fail on something like '2 apples' or 'Some olive oil').
    * For the purposes of this lab you don't have to worry about those cases.
-   * @param {String} ingredient the raw ingredient string you'd like to process
+   * @titleParam {String} ingredient the raw ingredient string you'd like to process
    * @return {String} the ingredient without the measurement & quantity 
    * (e.g. '1 cup flour' returns 'flour')
    */
