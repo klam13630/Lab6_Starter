@@ -88,7 +88,6 @@ class RecipeCard extends HTMLElement {
     styleElem.innerHTML = styles;
 
     // Here's the root element that you'll want to attach all of your other elements to
-    console.log(data);
     const card = document.createElement('article');
 
     let image = document.createElement('img');
@@ -133,7 +132,6 @@ class RecipeCard extends HTMLElement {
     }
 
     let time = document.createElement('time');
-    //console.log(searchForKey(data, 'cookTime'));
     time.innerHTML = convertTime(searchForKey(data, 'totalTime'));
     
     let ingredients = document.createElement('p');
@@ -191,7 +189,6 @@ function searchForKey(object, key) {
   });
   return value;
 }
-
 /**
  * Extract the URL from the given recipe schema JSON object
  * @titleParam {Object} data Raw recipe JSON to find the URL of
